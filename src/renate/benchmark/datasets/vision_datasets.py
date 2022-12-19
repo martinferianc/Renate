@@ -73,16 +73,13 @@ class TinyImageNetDataModule(RenateDataModule):
 
     def _preprocess_tiny_imagenet(self, train: bool) -> Tuple[List[str], List[int]]:
         """A helper function to preprocess the TinyImageNet dataset."""
-        if train:
-            data_path = os.path.join(self._data_path, self._dataset_name, "tiny-imagenet-200")
-        else:
-            data_path = os.path.join(self._data_path, self._dataset_name, "tiny-imagenet-200")
+        data_path = os.path.join(self._data_path, self._dataset_name, "tiny-imagenet-200")
         with open(os.path.join(data_path, "wnids.txt"), "r") as f:
             label_encoding = {line.strip(): i for i, line in enumerate(f.readlines())}
         X = []
         y = []
         if train:
-            for label in label_encoding.keys():
+            for label in label_encoding:
                 class_path = os.path.join(data_path, "train", label)
                 for file_name in os.listdir(os.path.join(class_path, "images")):
                     X.append(os.path.join(class_path, "images", file_name))
@@ -225,7 +222,7 @@ class CLEARDataModule(RenateDataModule):
             seed=seed,
         )
         self._dataset_name = dataset_name.lower()
-        assert self._dataset_name in ["clear10", "clear100"]
+        assert self._dataset_name in {"clear10", "clear100"}
         self._verify_chunk_id(chunk_id)
         self._chunk_id = chunk_id
 

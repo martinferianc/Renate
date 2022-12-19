@@ -50,7 +50,7 @@ def forgetting(results: Dict[str, List[List[float]]], task_id: int) -> float:
     def f(results: Dict[str, List[List[float]]], j: int, i: int) -> float:
         """A Helper function to compute the: math:`f_{j,i}`."""
         accuracy_ji = results[j][i]
-        max_accuracy_ki = max([results[k][i] for k in range(j)])
+        max_accuracy_ki = max(results[k][i] for k in range(j))
         return max_accuracy_ki - accuracy_ji
 
     sum_f = 0.0
@@ -78,7 +78,10 @@ def backward_transfer(results: Dict[str, List[List[float]]], task_id: int) -> fl
     if task_id == 0:
         return 0.0
     return (
-        sum([results["accuracy"][task_id][i] - results["accuracy"][i][i] for i in range(task_id)])
+        sum(
+            results["accuracy"][task_id][i] - results["accuracy"][i][i]
+            for i in range(task_id)
+        )
         / task_id
     )
 
@@ -102,9 +105,10 @@ def forward_transfer(results: Dict[str, List[List[float]]], task_id: int) -> flo
     """
     if task_id == 0:
         return 0.0
-    return sum(
-        [
+    return (
+        sum(
             results["accuracy"][i - 1][i] - results["accuracy_init"][0][i]
             for i in range(1, task_id + 1)
-        ]
-    ) / (task_id)
+        )
+        / task_id
+    )

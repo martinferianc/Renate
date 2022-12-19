@@ -68,7 +68,7 @@ def redirect_to_tmp(uri: str) -> str:
     """
     if "SM_MODEL_DIR" in os.environ:  # If running on sagemaker, redirect checkpoints to /tmp
         assert uri.startswith("/opt/ml")
-        uri = "/tmp" + uri[7:]
+        uri = f"/tmp{uri[7:]}"
     return uri
 
 
@@ -103,8 +103,6 @@ def best_hyperparameters(
 def is_syne_tune_config_space(config_space: Dict[str, Any]) -> bool:
     """Returns `True` if any value in the configuration space defines a Syne Tune search space."""
     return any(
-        [
-            isinstance(hyperparameter_instance, Domain)
-            for hyperparameter_instance in config_space.values()
-        ]
+        isinstance(hyperparameter_instance, Domain)
+        for hyperparameter_instance in config_space.values()
     )

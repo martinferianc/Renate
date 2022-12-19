@@ -169,16 +169,15 @@ class ModelUpdaterCLI:
         """
         local_dir = maybe_download_from_s3(state_url, current_state_folder)
         folder_downloaded_from_s3 = local_dir == current_state_folder
-        if not folder_downloaded_from_s3:
-            if local_dir != current_state_folder:
-                shutil.rmtree(current_state_folder, ignore_errors=True)
-                if local_dir is not None:
-                    shutil.copytree(
-                        local_dir,
-                        current_state_folder,
-                        ignore=shutil.ignore_patterns("*.sagemaker-uploading"),
-                        dirs_exist_ok=True,
-                    )
+        if not folder_downloaded_from_s3 and local_dir != current_state_folder:
+            shutil.rmtree(current_state_folder, ignore_errors=True)
+            if local_dir is not None:
+                shutil.copytree(
+                    local_dir,
+                    current_state_folder,
+                    ignore=shutil.ignore_patterns("*.sagemaker-uploading"),
+                    dirs_exist_ok=True,
+                )
 
     def _prepare_data_state_model(self, args: argparse.Namespace) -> None:
         """Assigns locations for data, state and model."""
@@ -235,9 +234,9 @@ class ModelUpdaterCLI:
             logged_metrics=metrics,
             accelerator=args.accelerator,
             devices=args.devices,
-            early_stopping_enabled=bool(args.early_stopping),
+            early_stopping_enabled=args.early_stopping,
             **learner_kwargs,
-            **get_transforms_kwargs(config_module, args),
+            **get_transforms_kwargs(config_module, args)
         )
 
         model_updater.update(

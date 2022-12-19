@@ -62,7 +62,7 @@ def test_er_validation_buffer(tmpdir):
     datasets_val = []
     state_folder = None
     next_state_folder = defaults.current_state_folder(tmpdir)
-    for i in range(3):
+    for _ in range(3):
         dataset_val = torch.utils.data.TensorDataset(
             torch.rand((100, 10)),
             torch.randint(10, (100,)),

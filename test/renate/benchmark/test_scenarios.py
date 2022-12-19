@@ -59,10 +59,16 @@ def test_class_incremental_scenario():
         scenario.setup()
         train_data = scenario.train_data()
         val_data = scenario.val_data()
-        assert len(train_data) == sum([train_data_class_counts[c] for c in class_groupings[i]])
-        assert len(val_data) == sum([val_data_class_counts[c] for c in class_groupings[i]])
+        assert len(train_data) == sum(
+            train_data_class_counts[c] for c in class_groupings[i]
+        )
+        assert len(val_data) == sum(
+            val_data_class_counts[c] for c in class_groupings[i]
+        )
         for j, test_data in enumerate(scenario.test_data()):
-            assert len(test_data) == sum([test_data_class_counts[c] for c in class_groupings[j]])
+            assert len(test_data) == sum(
+                test_data_class_counts[c] for c in class_groupings[j]
+            )
 
 
 def test_class_incremental_scenario_class_grouping_error():
@@ -131,7 +137,7 @@ def test_permutation_scenario():
                 a, _ = torch.sort(split_orig_data_module_data[j][0].flatten())
                 b, _ = torch.sort(scenario_data[j][0].flatten())
                 assert torch.equal(a, b)
-        for j, test_data in enumerate(scenario.test_data()):
+        for test_data in scenario.test_data():
             assert len(test_data) == len(data_module.test_data())
             for k in range(len(test_data)):
                 a, _ = torch.sort(data_module.test_data()[k][0].flatten())

@@ -29,9 +29,8 @@ def run_apidoc(app):
         "-o",
         output_dir,
         module_dir,
+        *excludes,
     ]
-    cmd.extend(excludes)
-
     try:
         from sphinx.ext import apidoc  # Sphinx >= 1.7
 
@@ -109,7 +108,7 @@ html_context = {
     "default_mode": "light",
 }
 
-htmlhelp_basename = "{}doc".format(project)
+htmlhelp_basename = f"{project}doc"
 
 napoleon_use_rtype = False
 

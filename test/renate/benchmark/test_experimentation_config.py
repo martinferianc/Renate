@@ -21,10 +21,7 @@ from renate.benchmark.scenarios import (
 )
 
 
-@pytest.mark.parametrize(
-    "model_name,expected_model_class",
-    [(model_name, model_class) for model_name, model_class in zip(models.keys(), models.values())],
-)
+@pytest.mark.parametrize("model_name,expected_model_class", list(zip(models.keys(), models.values())))
 def test_model_fn(model_name, expected_model_class):
     model = model_fn(
         model_state_url=None,

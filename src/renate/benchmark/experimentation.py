@@ -82,13 +82,11 @@ def cumulative_metrics_summary(
     data = []
     for task_id in range(num_tasks + 1):
         row = [task_id + 1]
-        for _, metric in cumulative_metrics:
-            row.append(metric(results, task_id))
+        row.extend(metric(results, task_id) for _, metric in cumulative_metrics)
         data.append(row)
 
     column_names = ["Task ID"] + [name for name, _ in cumulative_metrics]
-    df = pd.DataFrame(data, columns=column_names)
-    return df
+    return pd.DataFrame(data, columns=column_names)
 
 
 def individual_metrics_summary(
@@ -106,21 +104,19 @@ def individual_metrics_summary(
         num_tasks: The total number of tasks.
     """
     data = []
-    metric_columns = [k for k in results.keys() if "_init" not in k]
+    metric_columns = [k for k in results if "_init" not in k]
 
     for task_id in range(current_task):
         row = [task_id + 1]
         for key in metric_columns:
             value = results[key]
-            for v in value[task_id]:
-                row.append(v)
+            row.extend(iter(value[task_id]))
         data.append(row)
 
     sub_columns = [f"Task {i}" for i in range(1, num_tasks + 1)]
     mux = pd.MultiIndex.from_product([metric_columns, sub_columns])
     mux = mux.insert(0, "Task ID")
-    df = pd.DataFrame(data, columns=mux)
-    return df
+    return pd.DataFrame(data, columns=mux)
 
 
 def execute_experiment_job(

@@ -187,10 +187,12 @@ class TransformScenario(Scenario):
                 self._val_data, transform=self._transforms[self._chunk_id]
             )
         self._test_data = []
-        for i in range(self._num_tasks):
-            self._test_data.append(
-                _TransformedDataset(self._data_module.test_data(), transform=self._transforms[i])
+        self._test_data.extend(
+            _TransformedDataset(
+                self._data_module.test_data(), transform=self._transforms[i]
             )
+            for i in range(self._num_tasks)
+        )
 
 
 class ImageRotationScenario(TransformScenario):

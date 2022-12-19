@@ -56,4 +56,4 @@ class ContinualNorm(_BatchNorm):
         )
 
     def extra_repr(self):
-        return super().extra_repr() + f", num_groups={self._num_groups}"
+        return f"{super().extra_repr()}, num_groups={self._num_groups}"

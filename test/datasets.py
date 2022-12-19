@@ -94,15 +94,14 @@ class DummyTorchVisionDataModuleWithChunks(DummyTorchVisionDataModule):
             self._transform,
         )
         self._train_data, self._val_data = self._split_train_val_data(train_data)
-        self._test_data = []
-        for i in range(self.num_chunks):
-            self._test_data.append(
-                DummyDataset(
-                    torch.split(self.X_test, 100 // self.num_chunks)[i],
-                    torch.split(self.y_test, 100 // self.num_chunks)[i],
-                    self._transform,
-                )
+        self._test_data = [
+            DummyDataset(
+                torch.split(self.X_test, 100 // self.num_chunks)[i],
+                torch.split(self.y_test, 100 // self.num_chunks)[i],
+                self._transform,
             )
+            for i in range(self.num_chunks)
+        ]
 
     # TODO: This is a work-around to make CLEAR available as a data module (single test dataset)
     # as well as a scenario (all test datasets) via BenchmarkScenario. Clean up!

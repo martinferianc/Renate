@@ -251,16 +251,14 @@ def _get_transfer_learning_task_evaluations(
     if (
         metric not in tuning_results
         or not len(tuning_results)
-        or not set([f"config_{config_name}" for config_name in config_space]).issubset(
-            tuning_results
-        )
+        or not {
+            f"config_{config_name}" for config_name in config_space
+        }.issubset(tuning_results)
     ):
         return None
 
     def pad_same_length(x):
-        if len(x) == max_epochs:
-            return x
-        return x + (max_epochs - len(x)) * [np.nan]
+        return x if len(x) == max_epochs else x + (max_epochs - len(x)) * [np.nan]
 
     hyperparameter_names = [
         hyperparameter for hyperparameter in tuning_results if hyperparameter.startswith("config_")
@@ -369,11 +367,15 @@ def _teardown_tuning_job(
                 )
         except AttributeError:
             raise RuntimeError(
-                "Not a single training run finished. This may have two reasons:\n"
-                "1) The provided tuning time is too short.\n"
-                "2) There is a bug in the training script."
-                + "\n\nLogs (stdout):\n\n{}".format("".join(backend.stdout(0)))
-                + "\n\nLogs (stderr):\n\n{}".format("".join(backend.stderr(0)))
+                (
+                    (
+                        "Not a single training run finished. This may have two reasons:\n"
+                        "1) The provided tuning time is too short.\n"
+                        "2) There is a bug in the training script."
+                        + f'\n\nLogs (stdout):\n\n{"".join(backend.stdout(0))}'
+                    )
+                    + f'\n\nLogs (stderr):\n\n{"".join(backend.stderr(0))}'
+                )
             )
         next_state_folder = defaults.next_state_folder(
             f"{experiment_folder}/{best_trial_id}/checkpoints"
@@ -431,7 +433,7 @@ def _verify_validation_set_for_hpo_and_checkpointing(
         config_space["metric"] = metric
         config_space["mode"] = mode
         return metric, mode
-    elif not val_exists and metric is not None:
+    elif metric is not None:
         warnings.warn("No need to pass `metric`. Without a validation set, it is not used.")
     return "train_loss", "min"
 
@@ -581,9 +583,10 @@ def _execute_tuning_job_locally(
         tuner.run()
     except ValueError:
         raise RuntimeError(
-            "Tuning failed."
-            + "\n\nLogs (stdout):\n\n{}".format("".join(backend.stdout(0)))
-            + "\n\nLogs (stderr):\n\n{}".format("".join(backend.stderr(0)))
+            (
+                f'Tuning failed.\n\nLogs (stdout):\n\n{"".join(backend.stdout(0))}'
+                + f'\n\nLogs (stderr):\n\n{"".join(backend.stderr(0))}'
+            )
         )
 
     logger.info("All training is completed. Saving state...")
@@ -620,7 +623,7 @@ def submit_remote_job(
     dependencies = _prepare_remote_job(tmp_dir=tmp_dir, **job_kwargs)
     PyTorch(
         entry_point=tuning_script,
-        source_dir=None if source_dir is None else str(source_dir),
+        source_dir=None if source_dir is None else source_dir,
         instance_type=instance_type,
         instance_count=instance_count,
         py_version=defaults.PYTHON_VERSION,

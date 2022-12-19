@@ -80,18 +80,16 @@ def test_model_updater_with_early_stopping(
         assert model_updater._num_epochs_trained == max_epochs
 
     is_warning_metric_missing_sent = any(
-        [
-            str(w.message).startswith("Early stopping is enabled but no metric is specified")
-            for w in warning_init
-        ]
+        str(w.message).startswith(
+            "Early stopping is enabled but no metric is specified"
+        )
+        for w in warning_init
     )
     is_warning_early_stopping_without_val_set_sent = any(
-        [
-            str(w.message).startswith(
-                "Early stopping is currently not supported without a validation set"
-            )
-            for w in warning_update
-        ]
+        str(w.message).startswith(
+            "Early stopping is currently not supported without a validation set"
+        )
+        for w in warning_update
     )
     assert not metric_monitored and early_stopping_enabled or not is_warning_metric_missing_sent
     assert (

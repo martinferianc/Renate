@@ -163,7 +163,7 @@ class WeightedPooledOutputDistillationLossComponent(WeightedLossComponent):
     ) -> None:
         """Save attributes to state dict."""
         super()._save_to_state_dict(destination, prefix, keep_vars)
-        destination[prefix + "distillation_type"] = self._distillation_type
+        destination[f"{prefix}distillation_type"] = self._distillation_type
 
     def _load_from_state_dict(
         self,
@@ -176,7 +176,7 @@ class WeightedPooledOutputDistillationLossComponent(WeightedLossComponent):
         error_msgs: List[str],
     ) -> None:
         """Load attributes from state dict."""
-        self._distillation_type = state_dict.pop(prefix + "distillation_type")
+        self._distillation_type = state_dict.pop(f"{prefix}distillation_type")
         super()._load_from_state_dict(
             state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs
         )

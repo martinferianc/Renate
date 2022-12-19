@@ -53,7 +53,7 @@ def test_update_hyperparameters(learner_class):
     check_learner_variables(learner, learner_kwargs)
     learner.update_hyperparameters(LEARNER_HYPERPARAMETER_UPDATES[learner_class])
     learner_kwargs = dict(learner_kwargs)
-    learner_kwargs.update(LEARNER_HYPERPARAMETER_UPDATES[learner_class])
+    learner_kwargs |= LEARNER_HYPERPARAMETER_UPDATES[learner_class]
     check_learner_variables(learner, learner_kwargs)
 
 

@@ -28,24 +28,24 @@ def data_module_fn(
         seed=seed,
     )
 
-    class_incremental_scenario = ClassIncrementalScenario(
+    return ClassIncrementalScenario(
         data_module=data_module,
         class_groupings=[[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]],
         chunk_id=chunk_id,
     )
-    return class_incremental_scenario
 
 
 def model_fn(model_state_url: Optional[Union[Path, str]] = None) -> RenateModule:
     """Returns a model instance."""
     if model_state_url is None:
-        model = MultiLayerPerceptron(
-            num_inputs=784, num_outputs=10, num_hidden_layers=2, hidden_size=128
+        return MultiLayerPerceptron(
+            num_inputs=784,
+            num_outputs=10,
+            num_hidden_layers=2,
+            hidden_size=128,
         )
-    else:
-        state_dict = torch.load(str(model_state_url))
-        model = MultiLayerPerceptron.from_state_dict(state_dict)
-    return model
+    state_dict = torch.load(str(model_state_url))
+    return MultiLayerPerceptron.from_state_dict(state_dict)
 
 
 def train_transform() -> Callable:

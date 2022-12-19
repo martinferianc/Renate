@@ -81,13 +81,13 @@ def get_updater_and_learner_kwargs(
         ]
         updater_class = SuperExperienceReplayModelUpdater
     elif args.updater == "OfflineER":
-        learner_args = learner_args + ["loss_weight_new_data", "memory_size", "memory_batch_size"]
+        learner_args += ["loss_weight_new_data", "memory_size", "memory_batch_size"]
         updater_class = OfflineExperienceReplayModelUpdater
     elif args.updater == "RD":
-        learner_args = learner_args + ["memory_size"]
+        learner_args += ["memory_size"]
         updater_class = RepeatedDistillationModelUpdater
     elif args.updater == "GDumb":
-        learner_args = learner_args + ["memory_size"]
+        learner_args += ["memory_size"]
         updater_class = GDumbModelUpdater
     elif args.updater == "Joint":
         learner_args = learner_args
@@ -100,11 +100,14 @@ def get_updater_and_learner_kwargs(
 
 def parse_hyperparameters(parser) -> None:
     """Adds arguments for the specified updater."""
-    updater: Optional[str] = None
-    for i, arg in enumerate(sys.argv):
-        if arg == "--updater" and len(sys.argv) > i:
-            updater = sys.argv[i + 1]
-            break
+    updater: Optional[str] = next(
+        (
+            sys.argv[i + 1]
+            for i, arg in enumerate(sys.argv)
+            if arg == "--updater" and len(sys.argv) > i
+        ),
+        None,
+    )
     if updater is None:
         return
 
@@ -482,13 +485,13 @@ def get_transforms_kwargs(
         "buffer_transform",
         "buffer_target_transform",
     ]
-    transforms = {}
-    for transform_fn_name in transform_fn_names:
-        if transform_fn_name in vars(config_module):
-            transforms[transform_fn_name] = getattr(config_module, transform_fn_name)(
-                **get_transform_args(args)
-            )
-    return transforms
+    return {
+        transform_fn_name: getattr(config_module, transform_fn_name)(
+            **get_transform_args(args)
+        )
+        for transform_fn_name in transform_fn_names
+        if transform_fn_name in vars(config_module)
+    }
 
 
 def get_scheduler_kwargs(

@@ -29,13 +29,11 @@ def model_fn(model_state_url: Optional[Union[Path, str]] = None) -> RenateModule
     if model_state_url is None:
         # If no model state is given, we create the model from scratch with initial model
         # hyperparameters.
-        model = MyMNISTMLP(num_hidden=100)
-    else:
-        # If a model state is passed, we reload the model using PyTorch's load_state_dict.
-        # In this case, model hyperparameters are restored from the saved state.
-        state_dict = torch.load(str(model_state_url))
-        model = MyMNISTMLP.from_state_dict(state_dict)
-    return model
+        return MyMNISTMLP(num_hidden=100)
+    # If a model state is passed, we reload the model using PyTorch's load_state_dict.
+    # In this case, model hyperparameters are restored from the saved state.
+    state_dict = torch.load(str(model_state_url))
+    return MyMNISTMLP.from_state_dict(state_dict)
 
 
 class MyMNISTDataModule(RenateDataModule):

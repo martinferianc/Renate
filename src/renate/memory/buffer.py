@@ -311,7 +311,8 @@ class GreedyClassBalancingBuffer(DataBuffer):
                 self._record_class_index(dataset[i], len(self) - 1)
             else:
                 class_counts_max_value = max(
-                    [len(self._class_to_index_map[key]) for key in self._class_to_index_map.keys()]
+                    len(self._class_to_index_map[key])
+                    for key in self._class_to_index_map.keys()
                 )
                 largest_classes = [
                     k

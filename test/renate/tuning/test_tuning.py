@@ -326,9 +326,7 @@ def test_load_tuning_history_when_no_previous_history_exists(tmpdir, use_dir):
     Case 1: state_url is None. Return empty dict.
     Case 2: state_url is a path which does not contain a tuning history. Return empty dict.
     """
-    state_url = None
-    if use_dir:
-        state_url = tmpdir
+    state_url = tmpdir if use_dir else None
     task_evaluations = _load_tuning_history(state_url, {"lr": 0.01}, "val_loss")
     assert task_evaluations == {}
 

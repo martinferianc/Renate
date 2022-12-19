@@ -74,11 +74,9 @@ def model_fn(
     if model_fn_num_outputs is not None:
         model_kwargs["num_outputs"] = int(model_fn_num_outputs)
     if model_state_url is None:
-        model = model_class(**model_kwargs)
-    else:
-        state_dict = torch.load(str(model_state_url))
-        model = model_class.from_state_dict(state_dict)
-    return model
+        return model_class(**model_kwargs)
+    state_dict = torch.load(str(model_state_url))
+    return model_class.from_state_dict(state_dict)
 
 
 def get_data_module(
@@ -88,7 +86,7 @@ def get_data_module(
         return TorchVisionDataModule(
             data_path, dataset_name=dataset_name, val_size=val_size, seed=seed
         )
-    if dataset_name in ["CLEAR10", "CLEAR100"]:
+    if dataset_name in {"CLEAR10", "CLEAR100"}:
         return CLEARDataModule(data_path, dataset_name=dataset_name, val_size=val_size, seed=seed)
     if dataset_name in TorchTextDataModule.dataset_dict:
         return TorchTextDataModule(
@@ -202,9 +200,9 @@ def _get_normalize_transform(dataset_name):
 
 def train_transform(transform_dataset_name: str) -> Optional[transforms.Compose]:
     """Returns a transform function to be used in the training."""
-    if transform_dataset_name in ["MNIST", "FashionMNIST"]:
+    if transform_dataset_name in {"MNIST", "FashionMNIST"}:
         return None
-    elif transform_dataset_name in ["CIFAR10", "CIFAR100"]:
+    elif transform_dataset_name in {"CIFAR10", "CIFAR100"}:
         return transforms.Compose(
             [
                 transforms.RandomCrop(32, padding=4),
@@ -217,8 +215,8 @@ def train_transform(transform_dataset_name: str) -> Optional[transforms.Compose]
 
 def test_transform(transform_dataset_name: str) -> Optional[transforms.Normalize]:
     """Returns a transform function to be used for validation or testing."""
-    if transform_dataset_name in ["MNIST", "FashionMNIST"]:
+    if transform_dataset_name in {"MNIST", "FashionMNIST"}:
         return None
-    elif transform_dataset_name in ["CIFAR10", "CIFAR100"]:
+    elif transform_dataset_name in {"CIFAR10", "CIFAR100"}:
         return _get_normalize_transform(transform_dataset_name)
     raise ValueError(f"Unknown dataset `{transform_dataset_name}`.")

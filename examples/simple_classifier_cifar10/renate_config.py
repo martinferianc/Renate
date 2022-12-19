@@ -16,11 +16,9 @@ from renate.models import RenateModule
 def model_fn(model_state_url: Optional[Union[Path, str]] = None) -> RenateModule:
     """Returns a model instance."""
     if model_state_url is None:
-        model = ResNet18CIFAR()
-    else:
-        state_dict = torch.load(str(model_state_url))
-        model = ResNet18CIFAR.from_state_dict(state_dict)
-    return model
+        return ResNet18CIFAR()
+    state_dict = torch.load(str(model_state_url))
+    return ResNet18CIFAR.from_state_dict(state_dict)
 
 
 def data_module_fn(
@@ -37,12 +35,11 @@ def data_module_fn(
         val_size=0.2,
         seed=seed,
     )
-    class_incremental_scenario = ClassIncrementalScenario(
+    return ClassIncrementalScenario(
         data_module=data_module,
         class_groupings=[[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]],
         chunk_id=chunk_id,
     )
-    return class_incremental_scenario
 
 
 def train_transform() -> Callable:

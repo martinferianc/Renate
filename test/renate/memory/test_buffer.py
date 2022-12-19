@@ -150,7 +150,7 @@ def test_buffer_get_state_dict(max_size):
     assert torch.all(torch.eq(buffer.metadata["x"], state_dict["metadata"]["x"]))
 
     for key in ["max_size", "storage_mode", "seed", "count", "data_points"]:
-        assert getattr(buffer, "_" + key) == state_dict[key]
+        assert getattr(buffer, f"_{key}") == state_dict[key]
     assert buffer.metadata == state_dict["metadata"]
     assert state_dict["size"] == max_size
     assert len(state_dict["data_points"]["0"]) == max_size
@@ -186,8 +186,8 @@ def test_buffer_load_state_dict(buffer_type):
     assert torch.all(torch.eq(buffer.metadata["x"], state_dict["metadata"]["x"]))
 
     for key in ["max_size", "storage_mode", "seed", "count", "data_points", "size"]:
-        if not isinstance(getattr(buffer, "_" + key), list):
-            assert getattr(buffer, "_" + key) == state_dict[key]
+        if not isinstance(getattr(buffer, f"_{key}"), list):
+            assert getattr(buffer, f"_{key}") == state_dict[key]
 
 
 @pytest.mark.parametrize(

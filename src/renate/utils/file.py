@@ -226,7 +226,7 @@ def delete_file_from_s3(bucket: str, object_name: str) -> None:
         object_name: object to be deleted
     """
     s3_client = boto3.client("s3")
-    s3_client.delete_object(Bucket=bucket, Key=str(object_name))
+    s3_client.delete_object(Bucket=bucket, Key=object_name)
 
 
 def unzip_file(dataset_name: str, data_path: Union[str, Path], file_name: str) -> None:

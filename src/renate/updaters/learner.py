@@ -194,7 +194,7 @@ class Learner(LightningModule, abc.ABC):
         """Returns `True` if there is a metric with name `metric_name`."""
         if metric_name is None:
             return True
-        logged_metrics = list()
+        logged_metrics = []
         for prefix in ["train", "val"]:
             for collection, collection_name in zip(
                 [self._metric_collections, self._loss_collections], ["metrics", "losses"]
